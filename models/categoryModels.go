@@ -58,3 +58,7 @@ type ErrorMsgKategori struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
 }
+
+type mKuntul struct {
+	UpdDate datatypes.Time `json:"upd_date"`
+}

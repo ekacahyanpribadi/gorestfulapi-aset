@@ -22,6 +22,7 @@ func GetErrorMsgKategori(fe validator.FieldError) string {
 
 // Get Kategori
 func GetKategori(c *gin.Context) {
+	//cek token access start
 	reqToken := c.Request.Header.Get("token")
 	var token []models.Token_access
 	goSql := models.DB.Raw("SELECT * FROM production.token_access WHERE 1=1 AND token='" + reqToken + "'").Find(&token)
@@ -30,12 +31,18 @@ func GetKategori(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Token access not found!"})
 		return
 	}
+	//cek token access end
 
 	//get data from database using model
 	var category []models.Kategori_aset
+
 	//models.DB.Find(&category)
 
-	models.DB.Raw("SELECT * FROM kategori_aset WHERE 1=1 ORDER BY ins_date DESC").Find(&category)
+	getSql := models.DB.Raw("SELECT * FROM kategori_aset WHERE 1=1 ORDER BY ins_date DESC").Find(&category)
+	if err := getSql.Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
 
 	//return json
 	c.JSON(200, gin.H{
@@ -43,6 +50,7 @@ func GetKategori(c *gin.Context) {
 		"message": "Lists Data Category",
 		"data":    category,
 	})
+
 }
 
 // Create Kategori
@@ -184,5 +192,26 @@ func DeleteKategori(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"success": true,
 		"message": "Kategori: " + c.Param("id_kategori") + " Deleted Successfully",
+	})
+}
+
+// Create Kategori
+func CreateLog(c *gin.Context) {
+
+	//create post
+	postLoghit := models.Kategori_aset{
+		Id_kategori:  "input.Id_kategori",
+		Kategori:     "input.Kategori",
+		Sub_kategori: " input.Sub_kategori",
+		Keterangan:   "input.Keterangan",
+	}
+
+	models.DB.Create(&postLoghit)
+
+	//return response json
+	c.JSON(201, gin.H{
+		"success": true,
+		"message": "Id: " + postLoghit.Id_kategori + " Created Successfully",
+		"data":    postLoghit,
 	})
 }
