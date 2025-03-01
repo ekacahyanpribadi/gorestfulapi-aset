@@ -42,7 +42,11 @@ func main() {
 	router.GET("/api/test", controllers.TestGet)
 
 	//ROUTE CATEGORY
-	router.GET("/api/category", controllers.GetCategory)
+	router.GET("/api/category", controllers.GetKategori)
+	router.POST("/api/category", controllers.CreateKategori)
+	router.GET("/api/category/:id_kategori", controllers.GetKategoriId)
+	router.PUT("/api/category/:id_kategori", controllers.UpdateKategori)
+	router.DELETE("/api/category/:id_kategori", controllers.DeleteKategori)
 
 	//mulai server dengan port 3000
 	router.Run(":3000")

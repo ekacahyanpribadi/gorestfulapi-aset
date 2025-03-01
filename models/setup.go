@@ -8,10 +8,16 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	database, err := gorm.Open(mysql.Open("c5sWttLvLZ:hF1zJCDbvsVkodiMMzaq@tcp(127.0.0.1:3306)/db_go_api"), &gorm.Config{})
+	//db local
+	//database, err := gorm.Open(mysql.Open("c5sWttLvLZ:hF1zJCDbvsVkodiMMzaq@tcp(127.0.0.1:3306)/easet"), &gorm.Config{})
+
+	//db on premis
+	database, err := gorm.Open(mysql.Open("c5sWttLvLZ:hF1zJCDbvsVkodiMMzaq@tcp(103.130.164.250:3306)/easet"), &gorm.Config{})
+
 	if err != nil {
 		panic("failed to connect database")
 	}
-	database.AutoMigrate(&Category{})
+	//database.AutoMigrate(&Category{})
 	DB = database
+
 }
