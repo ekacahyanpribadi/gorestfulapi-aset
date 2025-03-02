@@ -1,7 +1,5 @@
 package models
 
-import "gorm.io/datatypes"
-
 type Tabler interface {
 	TableName() string
 }
@@ -26,20 +24,8 @@ type Kategori_aset struct {
 	Upd_date                   string `json:"upd_date"`
 }
 
-type kaliKepake struct {
-	UpdDate datatypes.Time `json:"upd_date"`
-}
-
-type Token_access struct {
-	Id_token    string `json:"id_token" gorm:"primary_key"`
-	Token       string `json:"token"`
-	Desc1_token string `json:"desc1_token"`
-	Desc2_token string `json:"desc2_token"`
-}
-
-// type validation kategori input
 type ValidateKategoriInput struct {
-	Id_kategori                string `json:"id_kategori" binding:"required"`
+	Id_kategori                string `json:"id_kategori"`
 	Kategori                   string `json:"kategori" binding:"required"`
 	Sub_kategori               string `json:"sub_kategori" binding:"required"`
 	Keterangan                 string `json:"keterangan" binding:"required"`
@@ -53,12 +39,14 @@ type ValidateKategoriInput struct {
 	Upd_date                   string `json:"upd_date" binding:"required"`
 }
 
-// type error message
+type Token_access struct {
+	Id_token    string `json:"id_token" gorm:"primary_key"`
+	Token       string `json:"token"`
+	Desc1_token string `json:"desc1_token"`
+	Desc2_token string `json:"desc2_token"`
+}
+
 type ErrorMsgKategori struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
-}
-
-type mKuntul struct {
-	UpdDate datatypes.Time `json:"upd_date"`
 }

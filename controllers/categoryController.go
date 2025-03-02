@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	//"errors"
-	//"net/http"
 	"errors"
+	"math/rand"
 	"net/http"
 	"restfulapi/models"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -18,6 +19,27 @@ func GetErrorMsgKategori(fe validator.FieldError) string {
 		return "This field is required"
 	}
 	return "Unknown error"
+}
+
+const charset = "012345678901234567890123456789012345678901234567890123456789"
+const charset2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func randomNumber(n int) string {
+	sb := strings.Builder{}
+	sb.Grow(n)
+	for i := 0; i < n; i++ {
+		sb.WriteByte(charset[rand.Intn(len(charset))])
+	}
+	return sb.String()
+}
+
+func randomString(n int) string {
+	sb := strings.Builder{}
+	sb.Grow(n)
+	for i := 0; i < n; i++ {
+		sb.WriteByte(charset2[rand.Intn(len(charset2))])
+	}
+	return sb.String()
 }
 
 // Get Kategori
@@ -78,9 +100,22 @@ func CreateKategori(c *gin.Context) {
 		return
 	}
 
+	/*c.JSON(http.StatusOK, gin.H{
+		"messege": "Test!",
+		"data":    "Token access found!",
+	})
+	return*/
+
+	currentTime := time.Now().UTC().Add(7 * time.Hour)
+	const (
+		df = "20060102"
+	)
+	currentTimex := currentTime.Format(df)
+	genId := currentTimex + randomNumber(6) + randomString(6)
+
 	//create post
 	postKategori := models.Kategori_aset{
-		Id_kategori:                input.Id_kategori,
+		Id_kategori:                genId,
 		Kategori:                   input.Kategori,
 		Sub_kategori:               input.Sub_kategori,
 		Keterangan:                 input.Keterangan,
@@ -96,8 +131,7 @@ func CreateKategori(c *gin.Context) {
 
 	models.DB.Create(&postKategori)
 
-	//return response json
-	c.JSON(201, gin.H{
+	c.JSON(200, gin.H{
 		"success": true,
 		"message": "Id: " + postKategori.Id_kategori + " Created Successfully",
 		"data":    postKategori,

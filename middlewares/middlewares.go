@@ -103,7 +103,7 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 			"res_body":     ginBodyLogger.body.String(),
 		}).Info("request details")
 
-		currentTime := time.Now()
+		currentTime := time.Now().UTC().Add(7 * time.Hour)
 		const (
 			df = "20060102"
 		)
