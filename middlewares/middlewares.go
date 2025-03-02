@@ -38,6 +38,7 @@ func randomString(n int) string {
 	return sb.String()
 }
 
+// rubah nama tabel sesuai database start
 type Tabler interface {
 	TableName() string
 }
@@ -46,6 +47,9 @@ func (modelLoghit) TableName() string {
 	return "log_hit"
 }
 
+//rubah nama tabel sesuai database end
+
+// inisiasi model untuk tabel log hit start
 type modelLoghit struct {
 	Id          string    `json:"id" gorm:"primary_key"`
 	Datetime    time.Time `json:"datetime"`
@@ -55,6 +59,8 @@ type modelLoghit struct {
 	Status_resp int       `json:"status_resp"`
 	Json_resp   string    `json:"json_resp"`
 }
+
+//inisiasi model untuk tabel log hit end
 
 type ginBodyLogger struct {
 	// get all the methods implementation from the original one
@@ -103,7 +109,8 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 		)
 		currentTimex := currentTime.Format(df)
 		genId := currentTimex + randomNumber(6) + randomString(6)
-		//create log to db
+
+		//create log to db start
 		postLoghit := modelLoghit{
 			Id:          genId,
 			Datetime:    currentTime,
@@ -115,5 +122,6 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 		}
 
 		models.DB.Create(&postLoghit)
+		//create log to db end
 	}
 }
