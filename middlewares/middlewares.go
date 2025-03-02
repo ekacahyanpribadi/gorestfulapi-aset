@@ -47,12 +47,13 @@ func (modelLoghit) TableName() string {
 }
 
 type modelLoghit struct {
-	Id        string    `json:"id" gorm:"primary_key"`
-	Datetime  time.Time `json:"datetime"`
-	Method    string    `json:"method"`
-	Desc      string    `json:"desc"`
-	Json_req  string    `json:"json_req"`
-	Json_resp string    `json:"json_resp"`
+	Id          string    `json:"id" gorm:"primary_key"`
+	Datetime    time.Time `json:"datetime"`
+	Method      string    `json:"method"`
+	Desc        string    `json:"desc"`
+	Json_req    string    `json:"json_req"`
+	Status_resp int       `json:"status_resp"`
+	Json_resp   string    `json:"json_resp"`
 }
 
 type ginBodyLogger struct {
@@ -84,6 +85,9 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 			panic(fmt.Errorf("err while marshaling req msg: %v", err))
 		}
 		ctx.Next()
+
+		statusCode := ctx.Writer.Status()
+
 		logger.WithFields(log.Fields{
 			"status":       ctx.Writer.Status(),
 			"method":       ctx.Request.Method,
@@ -93,10 +97,6 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 			"res_body":     ginBodyLogger.body.String(),
 		}).Info("request details")
 
-		const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01233456789"
-
-		type LatinString string
-
 		currentTime := time.Now()
 		const (
 			df = "20060102"
@@ -105,12 +105,13 @@ func RequestLoggingMiddleware(logger *logrus.Logger) gin.HandlerFunc {
 		genId := currentTimex + randomNumber(6) + randomString(6)
 		//create log to db
 		postLoghit := modelLoghit{
-			Id:        genId,
-			Datetime:  currentTime,
-			Method:    ctx.Request.Method,
-			Desc:      ctx.Request.URL.Path,
-			Json_req:  string(data),
-			Json_resp: ginBodyLogger.body.String(),
+			Id:          genId,
+			Datetime:    currentTime,
+			Method:      ctx.Request.Method,
+			Desc:        ctx.Request.URL.Path,
+			Json_req:    string(data),
+			Status_resp: statusCode,
+			Json_resp:   ginBodyLogger.body.String(),
 		}
 
 		models.DB.Create(&postLoghit)
